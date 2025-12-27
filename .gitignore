@@ -1,0 +1,68 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+*.egg-info/
+build/
+dist/
+.eggs/
+.wheels/
+pip-wheel-metadata/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+*.log
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# IDEs / Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Project outputs
+# =========================
+simulation.csv
+simulation.png
+
+# If you later add batch outputs, keep them out of git:
+outputs/
+results/
+reports/
+
+# =========================
+# SBML models (optional)
+# Uncomment if you don't want to commit models
+# =========================
+# models/
+# *.xml
+# *.sbml
