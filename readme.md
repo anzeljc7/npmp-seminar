@@ -3,9 +3,9 @@
 To orodje omogoča enostavno delo z modeli v formatu **SBML**:
 
 - validacija SBML strukture s knjižnico **libSBML**
-- numerična simulacija z **Tellurium/RoadRunner**
+- numerična simulacija z **Tellurium**
 - shranjevanje rezultatov simulacije v **CSV**
-- samodejni izris grafa v **PNG**
+- samodejni izris grafa in generiranje **PNG slike** 
 
 
 Orodje je primerno za delo z LLM-generiranimi modeli in validacijo proti referenčnim modelom.
