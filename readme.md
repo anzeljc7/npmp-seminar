@@ -1,4 +1,4 @@
-# 🧪 SBML – Validacija in simulacija bioloških modelov
+# SBML – Validacija in simulacija bioloških modelov
 
 To orodje omogoča enostavno delo z modeli v formatu **SBML**:
 
@@ -25,7 +25,7 @@ python -m pip install -r requirements.txt
 ```
 ---
 
-## ▶Zagon validacije in simulacije
+## Zagon validacije in simulacije
 
 SBML modele (`.xml` ali `.sbml`) shranite v mapo `models/`.
 
