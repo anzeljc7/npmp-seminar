@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import Dict, Any, Optional, List, Union
 import os
@@ -36,6 +37,54 @@ class SimulationResult:
 def read_text(path: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
+
+
+# ---------------- SBML PREPROCESS (RoadRunner/Tellurium FIXES) ----------------
+
+def sanitize_for_roadrunner(sbml: str) -> str:
+    """
+    Preprocess SBML, da se izognemo tipičnim libRoadRunner napakam s simboli,
+    ki so lokalni parametri v kineticLaw (npr. Ty/Tz pri nekaterih BioModels modelih).
+
+    Strategija:
+      - zagotovi globalna parametra Ty in Tz na nivoju modela
+      - odstrani lokalne kopije Ty/Tz iz kineticLaw parametrov
+
+    Če python-libsbml ni nameščen, vrne original.
+    """
+    if libsbml is None:
+        return sbml
+
+    reader = libsbml.SBMLReader()
+    doc = reader.readSBMLFromString(sbml)
+    model = doc.getModel()
+    if model is None:
+        return sbml
+
+    def ensure_global_param(pid: str, value: float):
+        p = model.getParameter(pid)
+        if p is None:
+            p = model.createParameter()
+            p.setId(pid)
+        p.setValue(float(value))
+        p.setConstant(True)
+
+    # privzete vrednosti (pogosto v AND-gate BioModels primerih); če že obstajajo,
+    # jih to ne pokvari, samo zagotovi, da so "physically stored".
+    ensure_global_param("Ty", 0.5)
+    ensure_global_param("Tz", 0.5)
+
+    # SBML L2 local params so v kineticLaw listOfParameters
+    for rxn in model.getListOfReactions():
+        kl = rxn.getKineticLaw()
+        if kl is None:
+            continue
+        for i in reversed(range(kl.getNumParameters())):
+            lp = kl.getParameter(i)
+            if lp and lp.getId() in ("Ty", "Tz"):
+                kl.removeParameter(i)
+
+    return libsbml.writeSBMLToString(doc)
 
 
 # ---------------- VALIDATION ----------------
@@ -90,6 +139,7 @@ def simulate_sbml(
     start: float = 0.0,
     end: float = 100.0,
     points: int = 1001,
+    only_floating_species: bool = False,
 ) -> SimulationResult:
 
     if te is None:
@@ -99,12 +149,23 @@ def simulate_sbml(
         )
 
     try:
-        rr = te.loadSBMLModel(sbml)
+        sbml_fixed = sanitize_for_roadrunner(sbml)
+        rr = te.loadSBMLModel(sbml_fixed)
     except Exception as e:
         return SimulationResult(ok=False, message=f"Failed to load SBML: {e}")
 
     try:
-        sim = rr.simulate(start, end, points)
+        # ✅ naredi selection list, da dobiš tudi X (boundary species -> riše se kot [X])
+        floating = list(rr.getFloatingSpeciesIds())          # npr. Y, Z
+        boundary = list(rr.getBoundarySpeciesIds())          # npr. X
+
+        if only_floating_species:
+            selections = ["time"] + [f"[{s}]" for s in floating]
+        else:
+            # vključi tudi boundary species (torej [X])
+            selections = ["time"] + [f"[{s}]" for s in floating] + [f"[{s}]" for s in boundary]
+
+        sim = rr.simulate(start, end, points, selections)
 
         colnames = list(sim.colnames)
         arr = np.array(sim)
@@ -135,7 +196,7 @@ def simulate_sbml(
 
 # ---------------- PLOTTING ----------------
 
-def save_plot(sim: SimulationResult, filename: str = "simulation.png") -> Optional[str]:
+def save_plot(sim: SimulationResult, filename: str = "simulation123.png") -> Optional[str]:
     if not sim.ok or sim.data is None or sim.columns is None or sim.time is None:
         return None
 
@@ -161,7 +222,7 @@ def save_plot(sim: SimulationResult, filename: str = "simulation.png") -> Option
 
 # ---------------- CSV EXPORT ----------------
 
-def save_csv(sim: SimulationResult, filename: str = "simulation.csv") -> Optional[str]:
+def save_csv(sim: SimulationResult, filename: str = "simulation123.csv") -> Optional[str]:
     if not sim.ok or sim.data is None or sim.columns is None:
         return None
 
@@ -180,7 +241,8 @@ def save_csv(sim: SimulationResult, filename: str = "simulation.csv") -> Optiona
 def run_full_evaluation(
     sbml_source: Union[str, os.PathLike],
     is_path: bool = True,
-    sim_end: float = 200.0
+    sim_end: float = 200.0,
+    only_floating_species: bool = False,
 ) -> Dict[str, Any]:
 
     sbml = read_text(str(sbml_source)) if is_path else str(sbml_source)
@@ -194,7 +256,13 @@ def run_full_evaluation(
     out["validation_warnings"] = v.warnings
 
     # 2) simulation
-    sim = simulate_sbml(sbml, 0, sim_end, int(sim_end * 10 + 1))
+    sim = simulate_sbml(
+        sbml,
+        start=0.0,
+        end=sim_end,
+        points=int(sim_end * 10 + 1),
+        only_floating_species=only_floating_species,
+    )
     out["simulation_ok"] = sim.ok
     out["simulation_message"] = sim.message
 
@@ -205,8 +273,9 @@ def run_full_evaluation(
     out["final_values"] = sim.final_values
 
     # 3) save outputs for comparison
-    out["plot_file"] = save_plot(sim, "simulation.png")
-    out["csv_file"] = save_csv(sim, "simulation.csv")
+    os.makedirs("primeri", exist_ok=True)
+    out["plot_file"] = save_plot(sim, "primeri/simulation123.png")
+    out["csv_file"] = save_csv(sim, "primeri/simulation123.csv")
 
     return out
 
@@ -224,7 +293,8 @@ if __name__ == "__main__":
     report = run_full_evaluation(
         model_path,
         is_path=True,
-        sim_end=200.0
+        sim_end=20.0,
+        only_floating_species=False,  # True, če hočeš samo koncentracije species
     )
 
     print(json.dumps(report, indent=2))

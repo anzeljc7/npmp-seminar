@@ -76,7 +76,7 @@ Rezultati simulacije se lahko primerjajo z referenčnimi modeli
     "ADP": 0.22,
     "Glucose": 0.01
   },
-  "plot_file": "simulation.png",
-  "csv_file": "simulation.csv"
+  "plot_file": "simulation123.png",
+  "csv_file": "simulation123.csv"
 }
 ```

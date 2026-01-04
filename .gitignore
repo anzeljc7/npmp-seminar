@@ -51,8 +51,8 @@ desktop.ini
 # =========================
 # Project outputs
 # =========================
-simulation.csv
-simulation.png
+primeri/simulation123.csv
+primeri/simulation123.png
 
 # If you later add batch outputs, keep them out of git:
 outputs/
