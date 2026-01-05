@@ -29,10 +29,16 @@ python -m pip install -r requirements.txt
 
 SBML modele (`.xml` ali `.sbml`) shranite v mapo `models/`.
 
-Primer zagona:
+Primer zagona validacije in simulacije:
 
 ```bash
 python sbml_validate_and_simulate.py models/generated_model.xml
+```
+
+Primer zagona validacije:
+
+```bash
+python sbml_validate models/generated_model.xml
 ```
 
 Po zagonu skripta:
