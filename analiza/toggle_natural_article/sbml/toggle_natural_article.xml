@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="GeneticToggleSwitch" name="Gardner et al. 2000 Toggle Switch">
+    <listOfCompartments>
+      <compartment id="cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="A" name="Protein A" compartment="cell" initialConcentration="100" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="B" name="Protein B" compartment="cell" initialConcentration="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="alpha1" value="156.25" constant="true"/>
+      <parameter id="alpha2" value="15.6" constant="true"/>
+      <parameter id="beta" value="2.5" constant="true"/>
+      <parameter id="gamma" value="1" constant="true"/>
+      <parameter id="kd" value="1" constant="true"/>
+    </listOfParameters>
+    <listOfReactions>
+      <reaction id="Reaction_A" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="B"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <divide/>
+                <ci> alpha1 </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <ci> B </ci>
+                    <ci> beta </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kd </ci>
+                <ci> A </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Reaction_B" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="B" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="A"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <minus/>
+              <apply>
+                <divide/>
+                <ci> alpha2 </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <ci> A </ci>
+                    <ci> gamma </ci>
+                  </apply>
+                </apply>
+              </apply>
+              <apply>
+                <times/>
+                <ci> kd </ci>
+                <ci> B </ci>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
