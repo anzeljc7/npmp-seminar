@@ -1,48 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model id="CFFL_Persistence_Detector" name="Coherent Feed-Forward Loop (AND Logic)" timeUnits="second" substanceUnits="mole" extentUnits="mole">
-    <listOfFunctionDefinitions>
-      <functionDefinition id="F">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <lambda>
-            <bvar>
-              <ci> U </ci>
-            </bvar>
-            <bvar>
-              <ci> T </ci>
-            </bvar>
-            <piecewise>
-              <piece>
-                <cn type="integer"> 1 </cn>
-                <apply>
-                  <geq/>
-                  <ci> U </ci>
-                  <ci> T </ci>
-                </apply>
-              </piece>
-              <otherwise>
-                <cn type="integer"> 0 </cn>
-              </otherwise>
-            </piecewise>
-          </lambda>
-        </math>
-      </functionDefinition>
-    </listOfFunctionDefinitions>
+  <model metaid="cffl_and_logic" id="CFFL_Type1_AND_Logic" name="Coherent Feed-Forward Loop (AND Logic)">
+    
     <listOfCompartments>
-      <compartment id="cell" size="1" spatialDimensions="3" constant="true"/>
+      <compartment id="cell" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
+
     <listOfSpecies>
-      <species id="X" compartment="cell" initialConcentration="0" boundaryCondition="true" constant="false" hasOnlySubstanceUnits="false"/>
-      <species id="Y" compartment="cell" initialConcentration="0" boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false"/>
-      <species id="Z" compartment="cell" initialConcentration="0" boundaryCondition="false" constant="false" hasOnlySubstanceUnits="false"/>
+      <species id="X" compartment="cell" initialConcentration="0" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      
+      <species id="Y" compartment="cell" initialConcentration="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      
+      <species id="Z" compartment="cell" initialConcentration="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
+
     <listOfParameters>
-      <parameter id="a" value="1.0" constant="true"/>
-      <parameter id="Ty" value="0.5" constant="true"/>
-      <parameter id="Tz" value="0.5" constant="true"/>
+      <parameter id="k_syn_Y" value="10" constant="true"/>
+      <parameter id="k_deg_Y" value="0.5" constant="true"/>
+      
+      <parameter id="k_syn_Z" value="10" constant="true"/>
+      <parameter id="k_deg_Z" value="0.5" constant="true"/>
+
+      <parameter id="K_XY" value="5" constant="true"/>
+      <parameter id="K_XZ" value="5" constant="true"/>
+      <parameter id="K_YZ" value="5" constant="true"/>
+
+      <parameter id="n" value="4" constant="true"/>
     </listOfParameters>
+
     <listOfReactions>
-      <reaction id="Synthesis_Y" reversible="false" fast="false">
+      <reaction id="J_syn_Y" reversible="false" fast="false">
         <listOfProducts>
           <speciesReference species="Y" stoichiometry="1" constant="true"/>
         </listOfProducts>
@@ -52,14 +39,35 @@
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
-              <ci> F </ci>
-              <ci> X </ci>
-              <ci> Ty </ci>
+              <times/>
+              <ci> k_syn_Y </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <power/>
+                  <ci> X </ci>
+                  <ci> n </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <power/>
+                    <ci> K_XY </ci>
+                    <ci> n </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> X </ci>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
+              </apply>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="Degradation_Y" reversible="false" fast="false">
+
+      <reaction id="J_deg_Y" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="Y" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -67,13 +75,14 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> a </ci>
+              <ci> k_deg_Y </ci>
               <ci> Y </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="Synthesis_Z" reversible="false" fast="false">
+
+      <reaction id="J_syn_Z" reversible="false" fast="false">
         <listOfProducts>
           <speciesReference species="Z" stoichiometry="1" constant="true"/>
         </listOfProducts>
@@ -85,21 +94,55 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
+              <ci> k_syn_Z </ci>
               <apply>
-                <ci> F </ci>
-                <ci> X </ci>
-                <ci> Ty </ci>
+                <divide/>
+                <apply>
+                  <power/>
+                  <ci> X </ci>
+                  <ci> n </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <power/>
+                    <ci> K_XZ </ci>
+                    <ci> n </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> X </ci>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
               </apply>
               <apply>
-                <ci> F </ci>
-                <ci> Y </ci>
-                <ci> Tz </ci>
+                <divide/>
+                <apply>
+                  <power/>
+                  <ci> Y </ci>
+                  <ci> n </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <power/>
+                    <ci> K_YZ </ci>
+                    <ci> n </ci>
+                  </apply>
+                  <apply>
+                    <power/>
+                    <ci> Y </ci>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
               </apply>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="Degradation_Z" reversible="false" fast="false">
+
+      <reaction id="J_deg_Z" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="Z" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -107,75 +150,42 @@
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> a </ci>
+              <ci> k_deg_Z </ci>
               <ci> Z </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
     </listOfReactions>
+
     <listOfEvents>
-      <event id="Event_X_High_Short" useValuesFromTriggerTime="true">
+      
+      <event id="ev_short_pulse_start" useValuesFromTriggerTime="true">
         <trigger initialValue="false" persistent="true">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <geq/>
               <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
-              <cn type="integer"> 3 </cn>
+              <cn type="integer"> 5 </cn>
             </apply>
           </math>
         </trigger>
         <listOfEventAssignments>
           <eventAssignment variable="X">
             <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <cn type="integer"> 1 </cn>
-            </math>
-          </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="Event_X_Low_Short" useValuesFromTriggerTime="true">
-        <trigger initialValue="false" persistent="true">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <geq/>
-              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
-              <cn type="real"> 3.5 </cn>
-            </apply>
-          </math>
-        </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="X">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <cn type="integer"> 0 </cn>
-            </math>
-          </eventAssignment>
-        </listOfEventAssignments>
-      </event>
-      <event id="Event_X_High_Long" useValuesFromTriggerTime="true">
-        <trigger initialValue="false" persistent="true">
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <apply>
-              <geq/>
-              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
               <cn type="integer"> 10 </cn>
-            </apply>
-          </math>
-        </trigger>
-        <listOfEventAssignments>
-          <eventAssignment variable="X">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <cn type="integer"> 1 </cn>
             </math>
           </eventAssignment>
         </listOfEventAssignments>
       </event>
-      <event id="Event_X_Low_Long" useValuesFromTriggerTime="true">
+
+      <event id="ev_short_pulse_end" useValuesFromTriggerTime="true">
         <trigger initialValue="false" persistent="true">
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <geq/>
               <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
-              <cn type="integer"> 15 </cn>
+              <cn type="integer"> 8 </cn>
             </apply>
           </math>
         </trigger>
@@ -187,6 +197,45 @@
           </eventAssignment>
         </listOfEventAssignments>
       </event>
+
+      <event id="ev_long_pulse_start" useValuesFromTriggerTime="true">
+        <trigger initialValue="false" persistent="true">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <geq/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+              <cn type="integer"> 20 </cn>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="X">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 10 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+
+      <event id="ev_long_pulse_end" useValuesFromTriggerTime="true">
+        <trigger initialValue="false" persistent="true">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <geq/>
+              <csymbol encoding="text" definitionURL="http://www.sbml.org/sbml/symbols/time"> time </csymbol>
+              <cn type="integer"> 40 </cn>
+            </apply>
+          </math>
+        </trigger>
+        <listOfEventAssignments>
+          <eventAssignment variable="X">
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <cn type="integer"> 0 </cn>
+            </math>
+          </eventAssignment>
+        </listOfEventAssignments>
+      </event>
+
     </listOfEvents>
   </model>
 </sbml>
