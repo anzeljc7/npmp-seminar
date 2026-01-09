@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="repressilator" name="Synthetic Oscillatory Network (Repressilator)">
+    
+    <listOfCompartments>
+      <compartment id="cell" size="1" spatialDimensions="3" constant="true"/>
+    </listOfCompartments>
+
+    <listOfSpecies>
+      <species id="mRNA1" compartment="cell" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mRNA2" compartment="cell" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="mRNA3" compartment="cell" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      
+      <species id="P1" compartment="cell" initialAmount="5" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="P2" compartment="cell" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="P3" compartment="cell" initialAmount="0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+
+    <listOfParameters>
+      <parameter id="alpha" value="100" constant="true"/> 
+      <parameter id="alpha0" value="0.1" constant="true"/> 
+      <parameter id="Km" value="10" constant="true"/> 
+      <parameter id="n" value="2.5" constant="true"/> 
+      <parameter id="beta" value="5" constant="true"/> 
+      <parameter id="dm" value="1.0" constant="true"/> 
+      <parameter id="dp" value="0.2" constant="true"/> 
+    </listOfParameters>
+
+    <listOfReactions>
+      
+      <reaction id="transcription_G1" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="mRNA1" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="P3"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <ci> alpha </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <ci> P3 </ci>
+                      <ci> Km </ci>
+                    </apply>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="translation_P1" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="P1" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mRNA1"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> beta </ci>
+              <ci> mRNA1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_mRNA1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mRNA1" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dm </ci>
+              <ci> mRNA1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_P1" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="P1" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dp </ci>
+              <ci> P1 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+
+      <reaction id="transcription_G2" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="mRNA2" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="P1"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <ci> alpha </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <ci> P1 </ci>
+                      <ci> Km </ci>
+                    </apply>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="translation_P2" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="P2" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mRNA2"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> beta </ci>
+              <ci> mRNA2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_mRNA2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mRNA2" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dm </ci>
+              <ci> mRNA2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_P2" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="P2" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dp </ci>
+              <ci> P2 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+
+      <reaction id="transcription_G3" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="mRNA3" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="P2"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <ci> alpha </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <power/>
+                    <apply>
+                      <divide/>
+                      <ci> P2 </ci>
+                      <ci> Km </ci>
+                    </apply>
+                    <ci> n </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="translation_P3" reversible="false" fast="false">
+        <listOfProducts>
+          <speciesReference species="P3" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="mRNA3"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> beta </ci>
+              <ci> mRNA3 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_mRNA3" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="mRNA3" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dm </ci>
+              <ci> mRNA3 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="degradation_P3" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="P3" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> dp </ci>
+              <ci> P3 </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+  </model>
+</sbml>

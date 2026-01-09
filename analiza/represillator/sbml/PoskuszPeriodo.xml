@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model id="Repressilator_Robust" name="Robust Genetic Clock (150min)" timeUnits="minute">
+    
+    <listOfCompartments>
+      <compartment id="cell" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+
+    <listOfSpecies>
+      <species id="mRNA_1" compartment="cell" initialConcentration="20.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="Protein_1" compartment="cell" initialConcentration="0.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      
+      <species id="mRNA_2" compartment="cell" initialConcentration="0.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="Protein_2" compartment="cell" initialConcentration="0.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      
+      <species id="mRNA_3" compartment="cell" initialConcentration="0.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="Protein_3" compartment="cell" initialConcentration="0.0" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+
+    <listOfParameters>
+      <parameter id="alpha" value="50.0" constant="true"/> 
+      <parameter id="alpha0" value="0.05" constant="true"/> 
+      <parameter id="beta" value="10.0" constant="true"/> 
+      
+      <parameter id="k_deg_m" value="0.5" constant="true"/> 
+      <parameter id="k_deg_p" value="0.04" constant="true"/> 
+      
+      <parameter id="n" value="3.0" constant="true"/> 
+      <parameter id="KM" value="400.0" constant="true"/> 
+    </listOfParameters>
+
+    <listOfReactions>
+      
+      <reaction id="Tx_1" reversible="false">
+        <listOfProducts> <speciesReference species="mRNA_1"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="Protein_3"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <apply> <times/> <ci> alpha </ci> <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply> </apply>
+                <apply>
+                  <plus/>
+                  <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply>
+                  <apply> <power/> <ci> Protein_3 </ci> <ci> n </ci> </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Tl_1" reversible="false">
+        <listOfProducts> <speciesReference species="Protein_1"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="mRNA_1"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> beta </ci> <ci> mRNA_1 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_m1" reversible="false">
+        <listOfReactants> <speciesReference species="mRNA_1"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_m </ci> <ci> mRNA_1 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_p1" reversible="false">
+        <listOfReactants> <speciesReference species="Protein_1"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_p </ci> <ci> Protein_1 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <reaction id="Tx_2" reversible="false">
+        <listOfProducts> <speciesReference species="mRNA_2"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="Protein_1"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <apply> <times/> <ci> alpha </ci> <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply> </apply>
+                <apply>
+                  <plus/>
+                  <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply>
+                  <apply> <power/> <ci> Protein_1 </ci> <ci> n </ci> </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Tl_2" reversible="false">
+        <listOfProducts> <speciesReference species="Protein_2"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="mRNA_2"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> beta </ci> <ci> mRNA_2 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_m2" reversible="false">
+        <listOfReactants> <speciesReference species="mRNA_2"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_m </ci> <ci> mRNA_2 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_p2" reversible="false">
+        <listOfReactants> <speciesReference species="Protein_2"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_p </ci> <ci> Protein_2 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <reaction id="Tx_3" reversible="false">
+        <listOfProducts> <speciesReference species="mRNA_3"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="Protein_2"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <plus/>
+              <ci> alpha0 </ci>
+              <apply>
+                <divide/>
+                <apply> <times/> <ci> alpha </ci> <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply> </apply>
+                <apply>
+                  <plus/>
+                  <apply> <power/> <ci> KM </ci> <ci> n </ci> </apply>
+                  <apply> <power/> <ci> Protein_2 </ci> <ci> n </ci> </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Tl_3" reversible="false">
+        <listOfProducts> <speciesReference species="Protein_3"/> </listOfProducts>
+        <listOfModifiers> <modifierSpeciesReference species="mRNA_3"/> </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> beta </ci> <ci> mRNA_3 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_m3" reversible="false">
+        <listOfReactants> <speciesReference species="mRNA_3"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_m </ci> <ci> mRNA_3 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="Deg_p3" reversible="false">
+        <listOfReactants> <speciesReference species="Protein_3"/> </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply> <times/> <ci> k_deg_p </ci> <ci> Protein_3 </ci> </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+  </model>
+</sbml>
